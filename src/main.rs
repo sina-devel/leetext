@@ -1,3 +1,9 @@
+use std::env;
+use std::io;
+use std::io::Read;
+use std::collections::HashMap;
+use std::process::exit;
+
 const LEET_ALPHABET: [&str; 26] = [
     "4", "8", "(", "|)", "3", "|=", "6", "|-|", "1", "_|", "|<", "|_", r"|\/|", r"|\|", "0", "|°",
     "9", "|2", "5", "7", r"\_/", r"\/", r"|/\|", ")(", "/", "2",
@@ -37,9 +43,59 @@ fn decode(input: &String) -> Result<String, String> {
     Ok(res)
 }
 
+fn help() {
+    println!("
+USAGE:
+    leetext word
+    leetext ARGS
+
+ARGS:
+    -h   print help
+    -p   print ALPHABET
+    -    read at stdin
+
+EXAMPLES:
+    leetext hi
+    echo hi | leetext -
+
+    ");
+}
+
+fn pipe() {
+    let mut data = String::new();
+    io::stdin().read_to_string(&mut data).unwrap_or_else(|e| {
+        eprintln!("error: {}", e);
+        exit(1);
+    });
+    match decode(&data) {
+        Ok(res) => println!("{}", res),
+        Err(err) => eprintln!("error: {}", err)
+    }
+}
+
+fn print_alphabet() {
+    let alphabet_to_leet: HashMap<&&str, &&str> = ALPHABET
+        .iter()
+        .zip(LEET_ALPHABET.iter())
+        .collect();
+    println!("{:#?}", alphabet_to_leet);
+}
+
 fn main() {
-    let res = decode(&r"|-|3|_|_0 |/\|0|2|_|)".to_string());
-    println!("{}", res.unwrap());
+    let args: Vec<String> = env::args().skip(1).collect();
+    if args.len() == 0 {
+        help();
+        exit(1);
+    }
+    match args[0].as_str() {
+        "-" => pipe(),
+        "-p" => print_alphabet(),
+        "-h" => help(),
+        _ => match decode(&args[0]) {
+            Ok(res) => println!("{}", res),
+            Err(err) => eprintln!("error: {}", err),
+        },
+    }
 }
 
 #[test]
