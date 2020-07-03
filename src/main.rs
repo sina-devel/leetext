@@ -1,7 +1,7 @@
+use std::collections::HashMap;
 use std::env;
 use std::io;
 use std::io::Read;
-use std::collections::HashMap;
 use std::process::exit;
 
 const LEET_ALPHABET: [&str; 26] = [
@@ -44,7 +44,8 @@ fn decode(input: &String) -> Result<String, String> {
 }
 
 fn help() {
-    println!("
+    println!(
+        "
 USAGE:
     leetext word
     leetext ARGS
@@ -58,7 +59,8 @@ EXAMPLES:
     leetext hi
     echo hi | leetext -
 
-    ");
+    "
+    );
 }
 
 fn pipe() {
@@ -69,15 +71,13 @@ fn pipe() {
     });
     match decode(&data) {
         Ok(res) => println!("{}", res),
-        Err(err) => eprintln!("error: {}", err)
+        Err(err) => eprintln!("error: {}", err),
     }
 }
 
 fn print_alphabet() {
-    let alphabet_to_leet: HashMap<&&str, &&str> = ALPHABET
-        .iter()
-        .zip(LEET_ALPHABET.iter())
-        .collect();
+    let alphabet_to_leet: HashMap<&&str, &&str> =
+        ALPHABET.iter().zip(LEET_ALPHABET.iter()).collect();
     println!("{:#?}", alphabet_to_leet);
 }
 
